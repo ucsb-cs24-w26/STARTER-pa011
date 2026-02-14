@@ -23,18 +23,63 @@ int main(int argv, char** argc){
     return 1;
   }
 
-  //Read each file
-  while (getline (cardFile1, line) && (line.length() > 0)){
+  set<Card> aliceHand;
+  set<Card> bobHand;
 
+  string tempSuit;
+  string tempVal;
+
+
+  while (cardFile1 >> tempSuit >> tempVal) 
+  {
+    Card c(tempSuit[0], tempVal);
+    aliceHand.insert(c);
   }
   cardFile1.close();
-
-
-  while (getline (cardFile2, line) && (line.length() > 0)){
-
+  while (cardFile2 >> tempSuit >> tempVal) 
+  {
+      Card c(tempSuit[0], tempVal);
+       bobHand.insert(c);
   }
   cardFile2.close();
-  
-  
+  while (true) {
+    bool aliceMatched = false;
+    bool bobMatched = false;
+
+      for (set<Card>::iterator it = aliceHand.begin(); it != aliceHand.end(); ++it) 
+      {
+        Card currentCard = *it;
+        if (bobHand.count(currentCard)) {
+          cout << "Alice picked matching card " << currentCard << endl;
+          bobHand.erase(currentCard);
+          aliceHand.erase(it);
+          aliceMatched = true;
+          break; 
+        }
+      }
+
+      for (set<Card>::reverse_iterator it = bobHand.rbegin(); it != bobHand.rend(); ++it) 
+      {
+        Card currentCard = *it;
+   
+        if (aliceHand.count(currentCard)) 
+        {
+        cout << "Bob picked matching card " << currentCard << endl;
+        aliceHand.erase(currentCard);
+        bobHand.erase(currentCard);
+        bobMatched = true;
+        break; 
+        }
+      }
+
+        if (!aliceMatched && !bobMatched) {break;}
+    }
+
+    cout << endl << "Alice's cards:" << endl;
+    for (set<Card>::iterator it = aliceHand.begin(); it != aliceHand.end(); ++it) {cout << *it << endl;}
+
+    cout << endl << "Bob's cards:" << endl;
+    for (set<Card>::iterator it = bobHand.begin(); it != bobHand.end(); ++it) 
+    {cout << *it << endl;}
   return 0;
 }

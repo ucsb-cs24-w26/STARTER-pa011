@@ -23,18 +23,73 @@ int main(int argv, char** argc){
     return 1;
   }
 
-  //Read each file
-  while (getline (cardFile1, line) && (line.length() > 0)){
+  CardList aliceHand;
+  CardList bobHand;
 
+  string tempSuit;
+  string tempVal;
+
+  while (cardFile1 >> tempSuit >> tempVal) 
+  {
+    Card c(tempSuit[0], tempVal);
+    aliceHand.insert(c);
   }
   cardFile1.close();
 
-
-  while (getline (cardFile2, line) && (line.length() > 0)){
-
+  while (cardFile2 >> tempSuit >> tempVal)
+  {
+    Card c(tempSuit[0], tempVal);
+    bobHand.insert(c);
   }
   cardFile2.close();
-  
-  
+
+  bool end = false;
+
+  while (!end) 
+  {
+    bool aliceMatched = false;
+    bool bobMatched = false;
+
+    for (CardList::Iterator it = aliceHand.begin(); it != aliceHand.end(); ++it) 
+    {
+      Card c = *it;
+      if (bobHand.contains(c)) 
+      {
+        cout << "Alice picked matching card " << c << endl;
+        bobHand.remove(c);
+        aliceHand.remove(c);
+        aliceMatched = true;
+        break;
+      }
+    }
+
+    for (CardList::Iterator it = bobHand.rbegin(); it != bobHand.rend(); --it) 
+    {
+      Card c = *it;
+      if (aliceHand.contains(c)) 
+      {
+        cout << "Bob picked matching card " << c << endl;
+        aliceHand.remove(c);
+        bobHand.remove(c);
+        bobMatched = true;
+        break;
+      }
+    }
+
+    if (!aliceMatched && !bobMatched) 
+    {
+      end = true;
+    }
+  }
+  cout << endl << "Alice's cards:" << endl;
+  for (CardList::Iterator it = aliceHand.begin(); it != aliceHand.end(); ++it) 
+    {
+      cout << *it << endl;
+    }
+  cout << endl << "Bob's cards:" << endl;
+  for (CardList::Iterator it = bobHand.begin(); it != bobHand.end(); ++it) 
+  {
+    cout << *it << endl;
+  }  
   return 0;
 }
